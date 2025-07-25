@@ -40,4 +40,22 @@ pipeline {
             }
         }
     }
+    post{
+        success{
+            script{
+                emailext from: 'fatfatwalenilesh@gmail.com',
+                to : 'yehmerifakeidhai@gmail.com',
+                body : 'Build Success',
+                subject : 'Build Success'
+            }
+        }
+        failure{
+            script{
+            emailext from : 'fatfatwalenilesh@gmail.com',
+            to : 'yehmerifakeidhai@gmail.com',
+            body : 'Build failed',
+            subject : 'Build failed'
+            }
+        }
+    }
 }
