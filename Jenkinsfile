@@ -4,12 +4,16 @@ pipeline {
     stages {
         stage("Code") {
             steps {
-                git url: "https://github.com/nilesh-fatfatwale/two-tier-flask-app", branch: "main"
+                script{
+                clone("https://github.com/nilesh-fatfatwale/two-tier-flask-app", branch: "main")
+                }
             }
         }
         stage("Trivy file system scan") {
               steps {
-                  sh "trivy fs . -o results.json"
+                 script{
+                     trivy_fs()
+                 }
               }
             }
             
@@ -27,14 +31,8 @@ pipeline {
 
         stage("Push to Docker Hub") {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: "dockerHubCreds",
-                    usernameVariable: "DOCKER_USERNAME",
-                    passwordVariable: "DOCKER_PASSWORD"
-                )]) {
-                    sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
-                    sh "docker image tag flask-app $DOCKER_USERNAME/flask-app"
-                    sh "docker push $DOCKER_USERNAME/flask-app:latest"
+                script{
+                    docker_push("dockerHubCreds","flask-app")
                 }
             }
         }
